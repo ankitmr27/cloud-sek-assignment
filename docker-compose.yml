@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # NestJS Application
+  app:
+    build: .
+    container_name: nestjs-app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nest_db
+      PORT: 3000
+      SALT_ROUND: 10
+      JWT_KEY: doiweihf2u9e0ru32390j2iejf0931
+    networks:
+      - app-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:14-alpine
+    container_name: postgres-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nest_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+# Networks
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  pgdata:
+    driver: local
